@@ -3,23 +3,15 @@ import pandas as pd
 
 st.set_page_config(page_title="Study Hub", layout="wide")
 
-
-# ---------------- GLOBAL CSS (SAME STYLE AS TELEGRAM) ---------------- #
+# ---------------- GLOBAL CSS ---------------- #
 st.markdown("""
 <style>
+.stApp { background-color: #f8fafc; }
 
-/* App background */
-.stApp {
-    background-color: #f8fafc;
-}
+h1, h2, h3 { color: #0f172a !important; }
 
-/* Titles */
-h1, h2, h3 {
-    color: #0f172a !important;
-}
-
-/* Card */
-.study-card {
+/* Study Card */
+.study-card, .telegram-card {
     background: white;
     border: 1px solid #e2e8f0;
     border-radius: 14px;
@@ -32,126 +24,160 @@ h1, h2, h3 {
     transition: 0.2s ease;
 }
 
-/* hover */
-.study-card:hover {
+.study-card:hover, .telegram-card:hover {
     transform: translateY(-3px);
     border-color: #cbd5e1;
     box-shadow: 0 6px 16px rgba(0,0,0,0.06);
 }
 
-/* title */
-.study-title {
+.study-title, .telegram-title {
     font-size: 18px;
     font-weight: 700;
     color: #0f172a;
 }
 
-/* subject pill */
 .subject-pill {
-    display: inline-block;
     padding: 4px 10px;
     border-radius: 999px;
     font-size: 12px;
-    font-weight: 600;
     background: #ecfeff;
     color: #0e7490;
 }
 
-/* buttons */
+.category-pill {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
 div.stButton > button {
     border-radius: 10px;
     font-weight: 600;
     border: 1px solid #e2e8f0;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
-
 # ---------------- HEADER ---------------- #
 st.title("📚 Study Hub")
-st.caption("Validated Google Sheets + Clean Resource Access")
-
+st.caption("Resources + Telegram Channels in one place")
 
 # ---------------- LOAD DATA ---------------- #
 SHEET_URL = "https://docs.google.com/spreadsheets/d/1al3Zy9Kd7YVIorEStPwI2x4C0GFDYBPGqIlVce1GWr8/export?format=csv"
-
 
 @st.cache_data(ttl=300)
 def load_data():
     return pd.read_csv(SHEET_URL)
 
-
 df = load_data()
 
+# ---------------- CREATE TABS ---------------- #
+tab1, tab2 = st.tabs(["📂 Resources", "📢 Telegram Channels"])
 
-# ---------------- CLEAN DATA ---------------- #
-def is_valid_link(x):
-    return isinstance(x, str) and x.startswith("http")
+# =========================================================
+# 📂 TAB 1 — RESOURCES
+# =========================================================
+with tab1:
 
+    def is_valid_link(x):
+        return isinstance(x, str) and x.startswith("http")
 
-df["valid"] = df["Link"].apply(is_valid_link)
-df = df[df["valid"] == True]
+    res_df = df[df["Link"].apply(is_valid_link)]
 
+    col1, col2 = st.columns([1, 2])
 
-# ---------------- TOP FILTERS ---------------- #
-col1, col2 = st.columns([1, 2])
+    with col1:
+        search = st.text_input("🔎 Search resources", key="res_search")
 
-with col1:
-    search = st.text_input("🔎 Search resources")
+    with col2:
+        subjects = ["All"] + sorted(res_df["Subject"].dropna().unique().tolist())
+        selected_subject = st.selectbox("📘 Subject", subjects, key="res_subject")
 
-with col2:
-    subjects = ["All"] + sorted(df["Subject"].dropna().unique().tolist())
-    selected_subject = st.selectbox("📘 Subject", subjects)
+    filtered = res_df.copy()
 
+    if selected_subject != "All":
+        filtered = filtered[filtered["Subject"] == selected_subject]
 
-# ---------------- FILTER DATA ---------------- #
-filtered = df.copy()
+    if search:
+        filtered = filtered[
+            filtered["Topic"].str.contains(search, case=False, na=False) |
+            filtered["Tags"].str.contains(search, case=False, na=False)
+        ]
 
-if selected_subject != "All":
-    filtered = filtered[filtered["Subject"] == selected_subject]
+    st.markdown("---")
 
-if search:
-    filtered = filtered[
-        filtered["Topic"].str.contains(search, case=False, na=False) |
-        filtered["Tags"].str.contains(search, case=False, na=False)
-    ]
+    if len(filtered) == 0:
+        st.info("No resources found.")
+    else:
+        cols = st.columns(3)
 
+        for i, (_, row) in enumerate(filtered.iterrows()):
+            with cols[i % 3]:
 
-# ---------------- TITLE ---------------- #
-st.subheader(f"📂 Resources ({len(filtered)})")
-st.markdown("---")
-
-
-# ---------------- CARDS ---------------- #
-if len(filtered) == 0:
-    st.info("No resources found.")
-
-else:
-    cols = st.columns(3)
-
-    for i, (_, row) in enumerate(filtered.iterrows()):
-        with cols[i % 3]:
-
-            st.markdown(
-                f"""
+                st.markdown(f"""
                 <div class="study-card">
                     <div>
                         <div class="study-title">📘 {row['Topic']}</div>
                         <div class="subject-pill">{row['Subject']}</div>
                     </div>
-
-                   
                 </div>
-                """,
-                unsafe_allow_html=True
-            )
+                """, unsafe_allow_html=True)
 
-            st.link_button(
-                "📂 Open Resource",
-                row["Link"],
-                use_container_width=True
-            )
+                st.link_button("📂 Open Resource", row["Link"], use_container_width=True)
+
+
+# =========================================================
+# 📢 TAB 2 — TELEGRAM
+# =========================================================
+with tab2:
+
+    def is_valid_telegram(x):
+        return isinstance(x, str) and ("t.me/" in x or "telegram.me/" in x)
+
+    tg_df = df[df["Telegram Link"].apply(is_valid_telegram)]
+
+    col1, col2 = st.columns([1, 2])
+
+    with col1:
+        search_tg = st.text_input("🔎 Search channels", key="tg_search")
+
+    with col2:
+        categories = ["All"] + sorted(tg_df["Category"].dropna().unique().tolist())
+        selected_category = st.selectbox("📂 Category", categories, key="tg_category")
+
+    filtered_tg = tg_df.copy()
+
+    if selected_category != "All":
+        filtered_tg = filtered_tg[filtered_tg["Category"] == selected_category]
+
+    if search_tg:
+        filtered_tg = filtered_tg[
+            filtered_tg["Channel Name"].str.contains(search_tg, case=False, na=False) |
+            filtered_tg["Category"].str.contains(search_tg, case=False, na=False)
+        ]
+
+    st.markdown("---")
+
+    if len(filtered_tg) == 0:
+        st.info("No channels found.")
+    else:
+        cols = st.columns(3)
+
+        for i, (_, row) in enumerate(filtered_tg.iterrows()):
+            with cols[i % 3]:
+
+                st.markdown(f"""
+                <div class="telegram-card">
+                    <div>
+                        <div class="telegram-title">📢 {row['Channel Name']}</div>
+                        <div class="category-pill">{row['Category']}</div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                st.link_button("📡 Join Channel", row["Telegram Link"], use_container_width=True)
 
 
 # ---------------- FOOTER ---------------- #
