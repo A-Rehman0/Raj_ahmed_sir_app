@@ -3,14 +3,32 @@ import pandas as pd
 
 st.set_page_config(page_title="Study Hub", layout="wide")
 
-# ---------------- GLOBAL CSS ---------------- #
+# ---------------- HIDE STREAMLIT UI ---------------- #
 st.markdown("""
 <style>
+
+/* Hide top bar */
+header {visibility: hidden;}
+
+/* Hide menu */
+#MainMenu {visibility: hidden;}
+
+/* Hide footer */
+footer {visibility: hidden;}
+
+/* Hide Manage App button */
+div[data-testid="stStatusWidget"] {display: none;}
+
+/* Remove top padding */
+.block-container {padding-top: 0rem;}
+
+/* ---------------- CUSTOM UI ---------------- */
+
 .stApp { background-color: #f8fafc; }
 
 h1, h2, h3 { color: #0f172a !important; }
 
-/* Study Card */
+/* Cards */
 .study-card, .telegram-card {
     background: white;
     border: 1px solid #e2e8f0;
@@ -57,6 +75,7 @@ div.stButton > button {
     font-weight: 600;
     border: 1px solid #e2e8f0;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -77,7 +96,7 @@ df = load_data()
 tab1, tab2 = st.tabs(["📂 Resources", "📢 Telegram Channels"])
 
 # =========================================================
-# 📂 TAB 1 — RESOURCES
+# 📂 RESOURCES TAB
 # =========================================================
 with tab1:
 
@@ -125,16 +144,25 @@ with tab1:
                 </div>
                 """, unsafe_allow_html=True)
 
-                st.link_button("📂 Open Resource", row["Link"], use_container_width=True)
-
+                st.link_button(
+                    "📂 Open Resource",
+                    row["Link"],
+                    use_container_width=True
+                )
 
 # =========================================================
-# 📢 TAB 2 — TELEGRAM
+# 📢 TELEGRAM TAB
 # =========================================================
 with tab2:
 
     def is_valid_telegram(x):
         return isinstance(x, str) and ("t.me/" in x or "telegram.me/" in x)
+
+    required_cols = ["Channel Name", "Telegram Link", "Category"]
+
+    if not all(col in df.columns for col in required_cols):
+        st.error("Missing required columns: Channel Name, Telegram Link, Category")
+        st.stop()
 
     tg_df = df[df["Telegram Link"].apply(is_valid_telegram)]
 
@@ -177,8 +205,11 @@ with tab2:
                 </div>
                 """, unsafe_allow_html=True)
 
-                st.link_button("📡 Join Channel", row["Telegram Link"], use_container_width=True)
-
+                st.link_button(
+                    "📡 Join Channel",
+                    row["Telegram Link"],
+                    use_container_width=True
+                )
 
 # ---------------- FOOTER ---------------- #
 st.markdown("---")
