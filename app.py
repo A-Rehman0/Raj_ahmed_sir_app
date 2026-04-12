@@ -210,6 +210,68 @@ with tab2:
                     row["Telegram Link"],
                     use_container_width=True
                 )
+# =========================================================
+# 🤖 TELEGRAM BOTS TAB
+# =========================================================
+with tab3:
+
+    def is_valid_bot(x):
+        return isinstance(x, str) and ("t.me/" in x or "telegram.me/" in x)
+
+    # Required bot columns
+    bot_required_cols = ["Channel Name", "Telegram Link", "Category"]
+
+    if not all(col in df.columns for col in bot_required_cols):
+        st.error("Missing required columns: Channel Name, Telegram Link, Category")
+        st.stop()
+
+    bot_df = df[df["Telegram Link"].apply(is_valid_bot)]
+
+    # Optional filter UI
+    col1, col2 = st.columns([1, 2])
+
+    with col1:
+        search_bot = st.text_input("🔎 Search bots", key="bot_search")
+
+    with col2:
+        bot_categories = ["All"] + sorted(bot_df["Category"].dropna().unique().tolist())
+        selected_bot_category = st.selectbox("📂 Bot Category", bot_categories, key="bot_category")
+
+    filtered_bot = bot_df.copy()
+
+    if selected_bot_category != "All":
+        filtered_bot = filtered_bot[filtered_bot["Category"] == selected_bot_category]
+
+    if search_bot:
+        filtered_bot = filtered_bot[
+            filtered_bot["Channel Name"].str.contains(search_bot, case=False, na=False) |
+            filtered_bot["Category"].str.contains(search_bot, case=False, na=False)
+        ]
+
+    st.markdown("---")
+
+    if len(filtered_bot) == 0:
+        st.info("No bots found.")
+    else:
+        cols = st.columns(3)
+
+        for i, (_, row) in enumerate(filtered_bot.iterrows()):
+            with cols[i % 3]:
+
+                st.markdown(f"""
+                <div class="telegram-card">
+                    <div>
+                        <div class="telegram-title">🤖 {row['Channel Name']}</div>
+                        <div class="category-pill">{row['Category']}</div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                st.link_button(
+                    "🚀 Open Bot",
+                    row["Telegram Link"],
+                    use_container_width=True
+                )
 
 # ---------------- FOOTER ---------------- #
 st.markdown("---")
