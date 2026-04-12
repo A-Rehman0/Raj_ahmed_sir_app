@@ -7,71 +7,80 @@ st.set_page_config(page_title="Study Hub", layout="wide")
 st.markdown("""
 <style>
 
-/* ================= CLEAN LIGHT THEME ================= */
+/* ================= BASE ================= */
 
 .stApp {
     background-color: #ffffff;
-    color: #111827;
+    color: #0f172a;
+    font-family: "Inter", sans-serif;
 }
 
-/* Remove Streamlit clutter */
+/* Hide Streamlit UI */
 header {visibility: hidden;}
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 div[data-testid="stStatusWidget"] {display: none;}
-.block-container {padding-top: 0rem;}
+.block-container {padding-top: 0rem; padding-left: 2rem; padding-right: 2rem;}
 
-/* ================= HEADINGS ================= */
+/* ================= PAGE TITLE ================= */
 
-h1, h2, h3 {
-    color: #111827 !important;
-    font-weight: 800;
+h1 {
+    font-size: 34px !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.5px;
+    color: #0f172a !important;
 }
 
-/* ================= CARD STYLE (HIGH CONTRAST + SEPARATION) ================= */
+h2, h3 {
+    font-weight: 800 !important;
+    color: #111827 !important;
+}
+
+/* ================= CARDS (PREMIUM CLEAN STYLE) ================= */
 
 .study-card, .telegram-card {
     background: #ffffff;
-    border: 2px solid #e5e7eb;   /* stronger border */
-    border-radius: 16px;
-    padding: 16px;
-    height: 150px;
+    border: 1.8px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 18px;
+    height: 160px;
+
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-
-    transition: all 0.2s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    transition: all 0.25s ease;
 }
 
-/* Hover effect (still light, no dark mode) */
+/* hover premium lift */
 .study-card:hover, .telegram-card:hover {
-    transform: translateY(-4px);
-    border-color: #3b82f6;  /* blue highlight */
-    box-shadow: 0 6px 18px rgba(59,130,246,0.15);
+    transform: translateY(-6px);
+    border-color: #2563eb;
+    box-shadow: 0 10px 25px rgba(37,99,235,0.15);
 }
 
-/* ================= TITLE ================= */
+/* ================= TITLES ================= */
 
 .study-title, .telegram-title {
     font-size: 18px;
     font-weight: 800;
-    color: #111827;
+    color: #0f172a;
+    line-height: 1.3;
 }
 
-/* ================= PILLS (CLEAR SEPARATION) ================= */
+/* ================= TAG PILLS ================= */
 
 .subject-pill {
     display: inline-block;
     padding: 5px 12px;
     border-radius: 999px;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
 
-    background: #f0f9ff;
-    color: #0369a1;
-    border: 1px solid #bae6fd;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
 }
 
 .category-pill {
@@ -79,34 +88,48 @@ h1, h2, h3 {
     padding: 5px 12px;
     border-radius: 999px;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
 
     background: #f5f3ff;
-    color: #5b21b6;
+    color: #6d28d9;
     border: 1px solid #ddd6fe;
 }
 
-/* ================= BUTTON ================= */
+/* ================= BUTTONS ================= */
 
 div.stButton > button {
-    border-radius: 10px;
+    border-radius: 12px;
     font-weight: 700;
-    border: 2px solid #e5e7eb;
+    border: 1.5px solid #e5e7eb;
     background: #ffffff;
-    color: #111827;
-    transition: 0.2s ease;
+    color: #0f172a;
+    transition: all 0.2s ease;
+    padding: 0.5rem 1rem;
 }
 
-/* Button hover */
+/* hover button */
 div.stButton > button:hover {
-    border-color: #3b82f6;
+    border-color: #2563eb;
     background: #eff6ff;
+    color: #1d4ed8;
 }
 
-/* ================= SPACING IMPROVEMENT ================= */
+/* ================= SEARCH / SELECT BOX ================= */
+
+input, selectbox {
+    border-radius: 10px !important;
+}
+
+/* ================= GRID SPACING ================= */
 
 .element-container {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 1rem 0;
 }
 
 </style>
