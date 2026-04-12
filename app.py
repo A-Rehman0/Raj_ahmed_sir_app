@@ -7,28 +7,16 @@ st.set_page_config(page_title="Study Hub", layout="wide")
 st.markdown("""
 <style>
 
-/* Hide top bar */
 header {visibility: hidden;}
-
-/* Hide menu */
 #MainMenu {visibility: hidden;}
-
-/* Hide footer */
 footer {visibility: hidden;}
-
-/* Hide Manage App button */
 div[data-testid="stStatusWidget"] {display: none;}
-
-/* Remove top padding */
 .block-container {padding-top: 0rem;}
-
-/* ---------------- CUSTOM UI ---------------- */
 
 .stApp { background-color: #f8fafc; }
 
 h1, h2, h3 { color: #0f172a !important; }
 
-/* Cards */
 .study-card, .telegram-card {
     background: white;
     border: 1px solid #e2e8f0;
@@ -91,8 +79,9 @@ def load_data():
     return pd.read_csv(SHEET_URL)
 
 df = load_data()
+df.columns = df.columns.str.strip()
 
-# ---------------- CREATE TABS ---------------- #
+# ---------------- TABS ---------------- #
 tab1, tab2, tab3 = st.tabs([
     "📂 Resources",
     "📢 Telegram Channels",
@@ -157,8 +146,9 @@ with tab1:
                     row["Resource_Link"],
                     use_container_width=True
                 )
+
 # =========================================================
-# 📢 TELEGRAM TAB
+# 📢 TELEGRAM CHANNELS TAB
 # =========================================================
 with tab2:
 
@@ -213,62 +203,64 @@ with tab2:
                     row["Channel_Link_1"],
                     use_container_width=True
                 )
+
 # =========================================================
 # 🤖 TELEGRAM BOTS TAB
 # =========================================================
-with tab2:
+with tab3:
 
-    tg_df = df[[
-        "Channel_Name_1",
-        "Channel_Link_1",
-        "Channel_Category_1"
+    bot_df = df[[
+        "Channel_Name_2",
+        "Channel_Link_2",
+        "Channel_Category_2"
     ]].copy()
 
-    tg_df = tg_df.dropna(subset=["Channel_Link_1"])
+    bot_df = bot_df.dropna(subset=["Channel_Link_2"])
 
     col1, col2 = st.columns([1, 2])
 
     with col1:
-        search_tg = st.text_input("🔎 Search channels", key="tg_search")
+        search_bot = st.text_input("🔎 Search bots", key="bot_search")
 
     with col2:
-        categories = ["All"] + sorted(tg_df["Channel_Category_1"].dropna().unique().tolist())
-        selected_category = st.selectbox("📂 Category", categories, key="tg_category")
+        bot_categories = ["All"] + sorted(bot_df["Channel_Category_2"].dropna().unique().tolist())
+        selected_bot_category = st.selectbox("📂 Bot Category", bot_categories, key="bot_category")
 
-    filtered_tg = tg_df.copy()
+    filtered_bot = bot_df.copy()
 
-    if selected_category != "All":
-        filtered_tg = filtered_tg[filtered_tg["Channel_Category_1"] == selected_category]
+    if selected_bot_category != "All":
+        filtered_bot = filtered_bot[filtered_bot["Channel_Category_2"] == selected_bot_category]
 
-    if search_tg:
-        filtered_tg = filtered_tg[
-            filtered_tg["Channel_Name_1"].str.contains(search_tg, case=False, na=False)
+    if search_bot:
+        filtered_bot = filtered_bot[
+            filtered_bot["Channel_Name_2"].str.contains(search_bot, case=False, na=False)
         ]
 
     st.markdown("---")
 
-    if len(filtered_tg) == 0:
-        st.info("No channels found.")
+    if len(filtered_bot) == 0:
+        st.info("No bots found.")
     else:
         cols = st.columns(3)
 
-        for i, (_, row) in enumerate(filtered_tg.iterrows()):
+        for i, (_, row) in enumerate(filtered_bot.iterrows()):
             with cols[i % 3]:
 
                 st.markdown(f"""
                 <div class="telegram-card">
                     <div>
-                        <div class="telegram-title">📢 {row['Channel_Name_1']}</div>
-                        <div class="category-pill">{row['Channel_Category_1']}</div>
+                        <div class="telegram-title">🤖 {row['Channel_Name_2']}</div>
+                        <div class="category-pill">{row['Channel_Category_2']}</div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
 
                 st.link_button(
-                    "📡 Join Channel",
-                    row["Channel_Link_1"],
+                    "🚀 Open Bot",
+                    row["Channel_Link_2"],
                     use_container_width=True
                 )
+
 # ---------------- FOOTER ---------------- #
 st.markdown("---")
 st.caption("⚡ Study Hub • Clean UI • Streamlit Powered")
