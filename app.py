@@ -7,61 +7,106 @@ st.set_page_config(page_title="Study Hub", layout="wide")
 st.markdown("""
 <style>
 
+/* ================= CLEAN LIGHT THEME ================= */
+
+.stApp {
+    background-color: #ffffff;
+    color: #111827;
+}
+
+/* Remove Streamlit clutter */
 header {visibility: hidden;}
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 div[data-testid="stStatusWidget"] {display: none;}
 .block-container {padding-top: 0rem;}
 
-.stApp { background-color: #f8fafc; }
+/* ================= HEADINGS ================= */
 
-h1, h2, h3 { color: #0f172a !important; }
+h1, h2, h3 {
+    color: #111827 !important;
+    font-weight: 800;
+}
+
+/* ================= CARD STYLE (HIGH CONTRAST + SEPARATION) ================= */
 
 .study-card, .telegram-card {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;   /* stronger border */
+    border-radius: 16px;
     padding: 16px;
-    height: 140px;
+    height: 150px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    transition: 0.2s ease;
+
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+
+    transition: all 0.2s ease;
 }
 
+/* Hover effect (still light, no dark mode) */
 .study-card:hover, .telegram-card:hover {
-    transform: translateY(-3px);
-    border-color: #cbd5e1;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    transform: translateY(-4px);
+    border-color: #3b82f6;  /* blue highlight */
+    box-shadow: 0 6px 18px rgba(59,130,246,0.15);
 }
+
+/* ================= TITLE ================= */
 
 .study-title, .telegram-title {
     font-size: 18px;
-    font-weight: 700;
-    color: #0f172a;
+    font-weight: 800;
+    color: #111827;
 }
 
+/* ================= PILLS (CLEAR SEPARATION) ================= */
+
 .subject-pill {
-    padding: 4px 10px;
+    display: inline-block;
+    padding: 5px 12px;
     border-radius: 999px;
     font-size: 12px;
-    background: #ecfeff;
-    color: #0e7490;
+    font-weight: 600;
+
+    background: #f0f9ff;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
 }
 
 .category-pill {
-    padding: 4px 10px;
+    display: inline-block;
+    padding: 5px 12px;
     border-radius: 999px;
     font-size: 12px;
-    background: #eff6ff;
-    color: #2563eb;
+    font-weight: 600;
+
+    background: #f5f3ff;
+    color: #5b21b6;
+    border: 1px solid #ddd6fe;
 }
+
+/* ================= BUTTON ================= */
 
 div.stButton > button {
     border-radius: 10px;
-    font-weight: 600;
-    border: 1px solid #e2e8f0;
+    font-weight: 700;
+    border: 2px solid #e5e7eb;
+    background: #ffffff;
+    color: #111827;
+    transition: 0.2s ease;
+}
+
+/* Button hover */
+div.stButton > button:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+/* ================= SPACING IMPROVEMENT ================= */
+
+.element-container {
+    margin-bottom: 8px;
 }
 
 </style>
