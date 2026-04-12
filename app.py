@@ -104,10 +104,14 @@ tab1, tab2, tab3 = st.tabs([
 # =========================================================
 with tab1:
 
-    def is_valid_link(x):
-        return isinstance(x, str) and x.startswith("http")
+    res_df = df[[
+        "Resource_Subject",
+        "Resource_Topic",
+        "Resource_Tags",
+        "Resource_Link"
+    ]].copy()
 
-    res_df = df[df["Link"].apply(is_valid_link)]
+    res_df = res_df.dropna(subset=["Resource_Link"])
 
     col1, col2 = st.columns([1, 2])
 
@@ -115,18 +119,18 @@ with tab1:
         search = st.text_input("🔎 Search resources", key="res_search")
 
     with col2:
-        subjects = ["All"] + sorted(res_df["Subject"].dropna().unique().tolist())
+        subjects = ["All"] + sorted(res_df["Resource_Subject"].dropna().unique().tolist())
         selected_subject = st.selectbox("📘 Subject", subjects, key="res_subject")
 
     filtered = res_df.copy()
 
     if selected_subject != "All":
-        filtered = filtered[filtered["Subject"] == selected_subject]
+        filtered = filtered[filtered["Resource_Subject"] == selected_subject]
 
     if search:
         filtered = filtered[
-            filtered["Topic"].str.contains(search, case=False, na=False) |
-            filtered["Tags"].str.contains(search, case=False, na=False)
+            filtered["Resource_Topic"].str.contains(search, case=False, na=False) |
+            filtered["Resource_Tags"].str.contains(search, case=False, na=False)
         ]
 
     st.markdown("---")
@@ -142,33 +146,29 @@ with tab1:
                 st.markdown(f"""
                 <div class="study-card">
                     <div>
-                        <div class="study-title">📘 {row['Topic']}</div>
-                        <div class="subject-pill">{row['Subject']}</div>
+                        <div class="study-title">📘 {row['Resource_Topic']}</div>
+                        <div class="subject-pill">{row['Resource_Subject']}</div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
 
                 st.link_button(
                     "📂 Open Resource",
-                    row["Link"],
+                    row["Resource_Link"],
                     use_container_width=True
                 )
-
 # =========================================================
 # 📢 TELEGRAM TAB
 # =========================================================
 with tab2:
 
-    def is_valid_telegram(x):
-        return isinstance(x, str) and ("t.me/" in x or "telegram.me/" in x)
+    tg_df = df[[
+        "Channel_Name_1",
+        "Channel_Link_1",
+        "Channel_Category_1"
+    ]].copy()
 
-    required_cols = ["Channel Name", "Telegram Link", "Category"]
-
-    if not all(col in df.columns for col in required_cols):
-        st.error("Missing required columns: Channel Name, Telegram Link, Category")
-        st.stop()
-
-    tg_df = df[df["Telegram Link"].apply(is_valid_telegram)]
+    tg_df = tg_df.dropna(subset=["Channel_Link_1"])
 
     col1, col2 = st.columns([1, 2])
 
@@ -176,18 +176,17 @@ with tab2:
         search_tg = st.text_input("🔎 Search channels", key="tg_search")
 
     with col2:
-        categories = ["All"] + sorted(tg_df["Category"].dropna().unique().tolist())
+        categories = ["All"] + sorted(tg_df["Channel_Category_1"].dropna().unique().tolist())
         selected_category = st.selectbox("📂 Category", categories, key="tg_category")
 
     filtered_tg = tg_df.copy()
 
     if selected_category != "All":
-        filtered_tg = filtered_tg[filtered_tg["Category"] == selected_category]
+        filtered_tg = filtered_tg[filtered_tg["Channel_Category_1"] == selected_category]
 
     if search_tg:
         filtered_tg = filtered_tg[
-            filtered_tg["Channel Name"].str.contains(search_tg, case=False, na=False) |
-            filtered_tg["Category"].str.contains(search_tg, case=False, na=False)
+            filtered_tg["Channel_Name_1"].str.contains(search_tg, case=False, na=False)
         ]
 
     st.markdown("---")
@@ -203,80 +202,73 @@ with tab2:
                 st.markdown(f"""
                 <div class="telegram-card">
                     <div>
-                        <div class="telegram-title">📢 {row['Channel Name']}</div>
-                        <div class="category-pill">{row['Category']}</div>
+                        <div class="telegram-title">📢 {row['Channel_Name_1']}</div>
+                        <div class="category-pill">{row['Channel_Category_1']}</div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
 
                 st.link_button(
                     "📡 Join Channel",
-                    row["Telegram Link"],
+                    row["Channel_Link_1"],
                     use_container_width=True
                 )
 # =========================================================
 # 🤖 TELEGRAM BOTS TAB
 # =========================================================
-with tab3:
+with tab2:
 
-    def is_valid_bot(x):
-        return isinstance(x, str) and ("t.me/" in x or "telegram.me/" in x)
+    tg_df = df[[
+        "Channel_Name_1",
+        "Channel_Link_1",
+        "Channel_Category_1"
+    ]].copy()
 
-    # Required bot columns
-    bot_required_cols = ["Channel Name", "Telegram Link", "Category"]
+    tg_df = tg_df.dropna(subset=["Channel_Link_1"])
 
-    if not all(col in df.columns for col in bot_required_cols):
-        st.error("Missing required columns: Channel Name, Telegram Link, Category")
-        st.stop()
-
-    bot_df = df[df["Telegram Link"].apply(is_valid_bot)]
-
-    # Optional filter UI
     col1, col2 = st.columns([1, 2])
 
     with col1:
-        search_bot = st.text_input("🔎 Search bots", key="bot_search")
+        search_tg = st.text_input("🔎 Search channels", key="tg_search")
 
     with col2:
-        bot_categories = ["All"] + sorted(bot_df["Category"].dropna().unique().tolist())
-        selected_bot_category = st.selectbox("📂 Bot Category", bot_categories, key="bot_category")
+        categories = ["All"] + sorted(tg_df["Channel_Category_1"].dropna().unique().tolist())
+        selected_category = st.selectbox("📂 Category", categories, key="tg_category")
 
-    filtered_bot = bot_df.copy()
+    filtered_tg = tg_df.copy()
 
-    if selected_bot_category != "All":
-        filtered_bot = filtered_bot[filtered_bot["Category"] == selected_bot_category]
+    if selected_category != "All":
+        filtered_tg = filtered_tg[filtered_tg["Channel_Category_1"] == selected_category]
 
-    if search_bot:
-        filtered_bot = filtered_bot[
-            filtered_bot["Channel Name"].str.contains(search_bot, case=False, na=False) |
-            filtered_bot["Category"].str.contains(search_bot, case=False, na=False)
+    if search_tg:
+        filtered_tg = filtered_tg[
+            filtered_tg["Channel_Name_1"].str.contains(search_tg, case=False, na=False)
         ]
 
     st.markdown("---")
 
-    if len(filtered_bot) == 0:
-        st.info("No bots found.")
+    if len(filtered_tg) == 0:
+        st.info("No channels found.")
     else:
         cols = st.columns(3)
 
-        for i, (_, row) in enumerate(filtered_bot.iterrows()):
+        for i, (_, row) in enumerate(filtered_tg.iterrows()):
             with cols[i % 3]:
 
                 st.markdown(f"""
                 <div class="telegram-card">
                     <div>
-                        <div class="telegram-title">🤖 {row['Channel Name']}</div>
-                        <div class="category-pill">{row['Category']}</div>
+                        <div class="telegram-title">📢 {row['Channel_Name_1']}</div>
+                        <div class="category-pill">{row['Channel_Category_1']}</div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
 
                 st.link_button(
-                    "🚀 Open Bot",
-                    row["Telegram Link"],
+                    "📡 Join Channel",
+                    row["Channel_Link_1"],
                     use_container_width=True
                 )
-
 # ---------------- FOOTER ---------------- #
 st.markdown("---")
 st.caption("⚡ Study Hub • Clean UI • Streamlit Powered")
