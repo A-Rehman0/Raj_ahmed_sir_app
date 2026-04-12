@@ -93,7 +93,11 @@ def load_data():
 df = load_data()
 
 # ---------------- CREATE TABS ---------------- #
-tab1, tab2 = st.tabs(["📂 Resources", "📢 Telegram Channels"])
+tab1, tab2, tab3 = st.tabs([
+    "📂 Resources",
+    "📢 Telegram Channels",
+    "🤖 Telegram Bots"
+])
 
 # =========================================================
 # 📂 RESOURCES TAB
