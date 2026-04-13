@@ -11,7 +11,6 @@ st.markdown("""
 :root {
     --bg: #f5f7ff;
     --card: rgba(255,255,255,0.92);
-    --text: #0f172a;
     --muted: #64748b;
     --primary: #4f46e5;
     --primary2: #2563eb;
