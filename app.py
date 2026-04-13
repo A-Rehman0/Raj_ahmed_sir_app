@@ -3,84 +3,95 @@ import pandas as pd
 
 st.set_page_config(page_title="Study Hub", layout="wide")
 
-# ---------------- HIDE STREAMLIT UI ---------------- #
+# ===================== PREMIUM UI THEME ===================== #
 st.markdown("""
 <style>
 
-/* ================= BASE ================= */
+/* ================= DESIGN SYSTEM ================= */
+:root {
+    --bg: #f5f7ff;
+    --card: rgba(255,255,255,0.92);
+    --text: #0f172a;
+    --muted: #64748b;
+    --primary: #4f46e5;
+    --primary2: #2563eb;
+    --border: rgba(15,23,42,0.08);
+}
 
+/* ================= GLOBAL ================= */
 .stApp {
-    background-color: #ffffff;
-    color: #0f172a;
+    background: radial-gradient(circle at top, #eef2ff, #f5f7ff 45%);
+    color: var(--text);
     font-family: "Inter", sans-serif;
 }
 
-/* Hide Streamlit UI */
+/* Hide Streamlit default UI */
 header {visibility: hidden;}
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 div[data-testid="stStatusWidget"] {display: none;}
-.block-container {padding-top: 0rem; padding-left: 2rem; padding-right: 2rem;}
 
-/* ================= PAGE TITLE ================= */
+/* ================= LAYOUT ================= */
+.block-container {
+    padding: 1.2rem 2.2rem;
+}
 
+/* ================= TITLE ================= */
 h1 {
-    font-size: 34px !important;
+    font-size: 42px !important;
     font-weight: 900 !important;
-    letter-spacing: -0.5px;
-    color: #0f172a !important;
+    letter-spacing: -1px;
+    margin-bottom: 0;
+    background: linear-gradient(90deg, #4f46e5, #2563eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 h2, h3 {
     font-weight: 800 !important;
-    color: #111827 !important;
 }
 
-/* ================= CARDS (PREMIUM CLEAN STYLE) ================= */
-
+/* ================= CARDS ================= */
 .study-card, .telegram-card {
-    background: #ffffff;
-    border: 1.8px solid #e5e7eb;
-    border-radius: 18px;
+    background: var(--card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 20px;
     padding: 18px;
-    height: 160px;
+    height: 170px;
 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
-    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    box-shadow: 0 8px 30px rgba(15,23,42,0.06);
     transition: all 0.25s ease;
 }
 
-/* hover premium lift */
 .study-card:hover, .telegram-card:hover {
-    transform: translateY(-6px);
-    border-color: #2563eb;
-    box-shadow: 0 10px 25px rgba(37,99,235,0.15);
+    transform: translateY(-8px) scale(1.01);
+    border-color: rgba(79,70,229,0.35);
+    box-shadow: 0 18px 45px rgba(79,70,229,0.18);
 }
 
 /* ================= TITLES ================= */
-
 .study-title, .telegram-title {
     font-size: 18px;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--text);
     line-height: 1.3;
 }
 
-/* ================= TAG PILLS ================= */
-
+/* ================= PILLS ================= */
 .subject-pill {
     display: inline-block;
     padding: 5px 12px;
     border-radius: 999px;
     font-size: 12px;
     font-weight: 700;
-
-    background: #eff6ff;
-    color: #1d4ed8;
-    border: 1px solid #bfdbfe;
+    background: linear-gradient(90deg, #eef2ff, #e0e7ff);
+    color: #4338ca;
+    border: 1px solid #c7d2fe;
 }
 
 .category-pill {
@@ -89,57 +100,61 @@ h2, h3 {
     border-radius: 999px;
     font-size: 12px;
     font-weight: 700;
-
-    background: #f5f3ff;
+    background: linear-gradient(90deg, #f5f3ff, #ede9fe);
     color: #6d28d9;
     border: 1px solid #ddd6fe;
 }
 
 /* ================= BUTTONS ================= */
-
 div.stButton > button {
     border-radius: 12px;
     font-weight: 700;
-    border: 1.5px solid #e5e7eb;
-    background: #ffffff;
-    color: #0f172a;
+    border: 1px solid rgba(15,23,42,0.1);
+    background: white;
     transition: all 0.2s ease;
-    padding: 0.5rem 1rem;
 }
 
-/* hover button */
 div.stButton > button:hover {
-    border-color: #2563eb;
-    background: #eff6ff;
-    color: #1d4ed8;
+    background: linear-gradient(90deg, #eef2ff, #e0e7ff);
+    border-color: #4f46e5;
+    color: #4f46e5;
+    transform: scale(1.02);
 }
 
-/* ================= SEARCH / SELECT BOX ================= */
-
-input, selectbox {
-    border-radius: 10px !important;
+/* ================= INPUTS ================= */
+input {
+    border-radius: 12px !important;
+    border: 1px solid rgba(15,23,42,0.1) !important;
 }
 
-/* ================= GRID SPACING ================= */
-
-.element-container {
-    margin-bottom: 10px;
+/* ================= TABS ================= */
+div[data-testid="stTabs"] button {
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 10px;
 }
 
+div[data-testid="stTabs"] button[aria-selected="true"] {
+    background: white;
+    color: #4f46e5;
+    box-shadow: 0 10px 25px rgba(79,70,229,0.15);
+}
+
+/* ================= DIVIDER ================= */
 hr {
     border: none;
-    border-top: 1px solid #e5e7eb;
-    margin: 1rem 0;
+    border-top: 1px solid rgba(15,23,42,0.08);
+    margin: 1.2rem 0;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- HEADER ---------------- #
+# ===================== HEADER ===================== #
 st.title("📚 Study Hub")
-st.caption("Resources + Telegram Channels in one place")
+st.caption("Your centralized learning dashboard — Resources • Telegram Channels • Bots")
 
-# ---------------- LOAD DATA ---------------- #
+# ===================== LOAD DATA ===================== #
 SHEET_URL = "https://docs.google.com/spreadsheets/d/1al3Zy9Kd7YVIorEStPwI2x4C0GFDYBPGqIlVce1GWr8/export?format=csv"
 
 @st.cache_data(ttl=300)
@@ -149,7 +164,7 @@ def load_data():
 df = load_data()
 df.columns = df.columns.str.strip()
 
-# ---------------- TABS ---------------- #
+# ===================== TABS ===================== #
 tab1, tab2, tab3 = st.tabs([
     "📂 Resources",
     "📢 Telegram Channels",
@@ -157,7 +172,7 @@ tab1, tab2, tab3 = st.tabs([
 ])
 
 # =========================================================
-# 📂 RESOURCES TAB
+# 📂 RESOURCES
 # =========================================================
 with tab1:
 
@@ -192,7 +207,7 @@ with tab1:
 
     st.markdown("---")
 
-    if len(filtered) == 0:
+    if filtered.empty:
         st.info("No resources found.")
     else:
         cols = st.columns(3)
@@ -209,14 +224,10 @@ with tab1:
                 </div>
                 """, unsafe_allow_html=True)
 
-                st.link_button(
-                    "📂 Open Resource",
-                    row["Resource_Link"],
-                    use_container_width=True
-                )
+                st.link_button("📂 Open Resource", row["Resource_Link"], use_container_width=True)
 
 # =========================================================
-# 📢 TELEGRAM CHANNELS TAB
+# 📢 CHANNELS
 # =========================================================
 with tab2:
 
@@ -249,7 +260,7 @@ with tab2:
 
     st.markdown("---")
 
-    if len(filtered_tg) == 0:
+    if filtered_tg.empty:
         st.info("No channels found.")
     else:
         cols = st.columns(3)
@@ -266,14 +277,10 @@ with tab2:
                 </div>
                 """, unsafe_allow_html=True)
 
-                st.link_button(
-                    "📡 Join Channel",
-                    row["Channel_Link_1"],
-                    use_container_width=True
-                )
+                st.link_button("📡 Join Channel", row["Channel_Link_1"], use_container_width=True)
 
 # =========================================================
-# 🤖 TELEGRAM BOTS TAB
+# 🤖 BOTS
 # =========================================================
 with tab3:
 
@@ -306,7 +313,7 @@ with tab3:
 
     st.markdown("---")
 
-    if len(filtered_bot) == 0:
+    if filtered_bot.empty:
         st.info("No bots found.")
     else:
         cols = st.columns(3)
@@ -323,12 +330,8 @@ with tab3:
                 </div>
                 """, unsafe_allow_html=True)
 
-                st.link_button(
-                    "🚀 Open Bot",
-                    row["Channel_Link_2"],
-                    use_container_width=True
-                )
+                st.link_button("🚀 Open Bot", row["Channel_Link_2"], use_container_width=True)
 
-# ---------------- FOOTER ---------------- #
+# ===================== FOOTER ===================== #
 st.markdown("---")
-st.caption("⚡ Study Hub • Clean UI • Streamlit Powered")
+st.caption("⚡ Study Hub • Premium UI • Built with Streamlit")
