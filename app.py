@@ -12,6 +12,7 @@ st.markdown("""
     --bg: #f5f7ff;
     --card: rgba(255,255,255,0.92);
     --muted: #64748b;
+    --text: #0f172a;
     --primary: #4f46e5;
     --primary2: #2563eb;
     --border: rgba(15,23,42,0.08);
@@ -41,9 +42,9 @@ h1 {
     font-weight: 900 !important;
     letter-spacing: -1px;
     margin-bottom: 0;
-    background: linear-gradient(90deg, #4f46e5, #2563eb);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #0f172a !important;   /* solid text color */
+    -webkit-text-fill-color: unset !important;
+    background: none !important;
 }
 
 h2, h3 {
